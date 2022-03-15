@@ -22,6 +22,7 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
+            ViewData["some_value"] = 12345;
             return View(await _context.employees.ToListAsync());
         }
 
@@ -54,7 +55,7 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeID,EmployeeName,EmployePosition,EmployeeAge")] Employee employee)
+        public async Task<IActionResult> Create([Bind("EmployeeID,EmployeeName,EmployeePosition,EmployeeAge")] Employee employee)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +87,7 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeID,EmployeeName,EmployePosition,EmployeeAge")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeID,EmployeeName,EmployeePosition,EmployeeAge")] Employee employee)
         {
             if (id != employee.EmployeeID)
             {
