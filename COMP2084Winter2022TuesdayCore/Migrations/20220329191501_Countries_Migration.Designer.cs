@@ -3,19 +3,21 @@ using COMP2084Winter2022TuesdayCore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace COMP2084Winter2022TuesdayCore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220329191501_Countries_Migration")]
+    partial class Countries_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.15")
+                .HasAnnotation("ProductVersion", "5.0.14")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("COMP2084Winter2022TuesdayCore.Models.Country", b =>
@@ -59,58 +61,6 @@ namespace COMP2084Winter2022TuesdayCore.Migrations
                     b.HasKey("EmployeeID");
 
                     b.ToTable("employees");
-                });
-
-            modelBuilder.Entity("COMP2084Winter2022TuesdayCore.Models.Folder", b =>
-                {
-                    b.Property<int>("FolderID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FolderName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OwnerID")
-                        .HasColumnType("int");
-
-                    b.HasKey("FolderID");
-
-                    b.HasIndex("OwnerID");
-
-                    b.ToTable("Folder");
-                });
-
-            modelBuilder.Entity("COMP2084Winter2022TuesdayCore.Models.Owner", b =>
-                {
-                    b.Property<int>("OwnerID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("OwnerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("OwnerID");
-
-                    b.ToTable("Owner");
-                });
-
-            modelBuilder.Entity("COMP2084Winter2022TuesdayCore.Models.Folder", b =>
-                {
-                    b.HasOne("COMP2084Winter2022TuesdayCore.Models.Owner", "Owner")
-                        .WithMany("Folders")
-                        .HasForeignKey("OwnerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("COMP2084Winter2022TuesdayCore.Models.Owner", b =>
-                {
-                    b.Navigation("Folders");
                 });
 #pragma warning restore 612, 618
         }

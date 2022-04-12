@@ -7,29 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using COMP2084Winter2022TuesdayCore.Data;
 using COMP2084Winter2022TuesdayCore.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace COMP2084Winter2022TuesdayCore.Controllers
 {
-    
-    public class EmployeesController : Controller
+    public class FoldersController : Controller
     {
         private readonly DataContext _context;
 
-        public EmployeesController(DataContext context)
+        public FoldersController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Employees
+        // GET: Folders
         public async Task<IActionResult> Index()
         {
-            ViewData["some_value"] = 12345;
-            return View(await _context.employees.ToListAsync());
+            var dataContext = _context.Folder.Include(f => f.Owner);
+            return View(await dataContext.ToListAsync());
         }
 
-        [Authorize]
-        // GET: Employees/Details/5
+        // GET: Folders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,40 +34,42 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.employees
-                .FirstOrDefaultAsync(m => m.EmployeeID == id);
-            if (employee == null)
+            var folder = await _context.Folder
+                .Include(f => f.Owner)
+                .FirstOrDefaultAsync(m => m.FolderID == id);
+            if (folder == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(folder);
         }
 
-        [Authorize]
-        // GET: Employees/Create
+        // GET: Folders/Create
         public IActionResult Create()
         {
+            ViewData["OwnerID"] = new SelectList(_context.Owner, "OwnerID", "OwnerName");
             return View();
         }
 
-        // POST: Employees/Create
+        // POST: Folders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeID,EmployeeName,EmployeePosition,EmployeeAge")] Employee employee)
+        public async Task<IActionResult> Create([Bind("FolderID,FolderName,OwnerID")] Folder folder)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
+                _context.Add(folder);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            ViewData["OwnerID"] = new SelectList(_context.Owner, "OwnerID", "OwnerName", folder.OwnerID);
+            return View(folder);
         }
 
-        // GET: Employees/Edit/5
+        // GET: Folders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,22 +77,23 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.employees.FindAsync(id);
-            if (employee == null)
+            var folder = await _context.Folder.FindAsync(id);
+            if (folder == null)
             {
                 return NotFound();
             }
-            return View(employee);
+            ViewData["OwnerID"] = new SelectList(_context.Owner, "OwnerID", "OwnerName", folder.OwnerID);
+            return View(folder);
         }
 
-        // POST: Employees/Edit/5
+        // POST: Folders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeID,EmployeeName,EmployeePosition,EmployeeAge")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("FolderID,FolderName,OwnerID")] Folder folder)
         {
-            if (id != employee.EmployeeID)
+            if (id != folder.FolderID)
             {
                 return NotFound();
             }
@@ -102,12 +102,12 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
             {
                 try
                 {
-                    _context.Update(employee);
+                    _context.Update(folder);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.EmployeeID))
+                    if (!FolderExists(folder.FolderID))
                     {
                         return NotFound();
                     }
@@ -118,10 +118,11 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            ViewData["OwnerID"] = new SelectList(_context.Owner, "OwnerID", "OwnerName", folder.OwnerID);
+            return View(folder);
         }
 
-        // GET: Employees/Delete/5
+        // GET: Folders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,30 +130,31 @@ namespace COMP2084Winter2022TuesdayCore.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.employees
-                .FirstOrDefaultAsync(m => m.EmployeeID == id);
-            if (employee == null)
+            var folder = await _context.Folder
+                .Include(f => f.Owner)
+                .FirstOrDefaultAsync(m => m.FolderID == id);
+            if (folder == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(folder);
         }
 
-        // POST: Employees/Delete/5
+        // POST: Folders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employee = await _context.employees.FindAsync(id);
-            _context.employees.Remove(employee);
+            var folder = await _context.Folder.FindAsync(id);
+            _context.Folder.Remove(folder);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(int id)
+        private bool FolderExists(int id)
         {
-            return _context.employees.Any(e => e.EmployeeID == id);
+            return _context.Folder.Any(e => e.FolderID == id);
         }
     }
 }
